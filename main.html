@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Image Viewer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    #image-container {
+      position: relative;
+      max-width: 90%;
+      max-height: 70vh;
+      margin-bottom: 20px;
+    }
+    #anime-img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transition: 0.3s ease;
+    }
+    #anime-img:hover {
+      transform: scale(1.02);
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #3a86ff;
+      color: white;
+      font-size: 14px;
+      transition: 0.25s;
+    }
+    button:hover {
+      background: #265bcc;
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    .mode-buttons button {
+      background: #ff006e;
+    }
+    .mode-buttons button:hover {
+      background: #c7004e;
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Random Anime Viewer</h1>
+
+  <div id="image-container">
+    <img id="anime-img" src="" alt="Random Anime">
+  </div>
+
+  <div class="controls">
+    <button onclick="fetchImage()">🔄 Refresh</button>
+    <button onclick="downloadImage()">⬇️ Download</button>
+    <button onclick="copyLink()">🔗 Copy Link</button>
+  </div>
+
+  <div class="controls mode-buttons">
+    <button onclick="setMode('safe')">✅ Safe</button>
+    <button onclick="setMode('suggestive')">💫 Suggestive</button>
+    <button onclick="setMode('borderline')">⚡ Borderline</button>
+    <button onclick="setMode('explicit')">🔥 Explicit</button>
+  </div>
+
+  <footer>
+    Powered by your API | Made with ❤️
+  </footer>
+
+  <script>
+    let currentMode = "safe";
+    let currentImageUrl = "";
+
+    async function fetchImage() {
+      try {
+        const res = await fetch(`https://caution.a0001.net/h3ntai.php?rating=${currentMode}`);
+        const data = await res.json();
+        currentImageUrl = data.image.url;
+        document.getElementById("anime-img").src = currentImageUrl;
+      } catch (err) {
+        console.error("Error fetching image:", err);
+        alert("⚠️ Failed to load image.");
+      }
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      fetchImage();
+    }
+
+    function downloadImage() {
+      if (!currentImageUrl) return;
+      const a = document.createElement("a");
+      a.href = currentImageUrl;
+      a.download = "anime-image.webp";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function copyLink() {
+      if (!currentImageUrl) return;
+      navigator.clipboard.writeText(currentImageUrl).then(() => {
+        alert("🔗 Image link copied!");
+      });
+    }
+
+    // Load first image on page load
+    fetchImage();
+  </script>
+</body>
+</html>
